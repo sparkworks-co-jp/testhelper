@@ -2,25 +2,24 @@ package jp.co.sparkworks.testhelper;
 
 public class Main {
 
-    public static void main(String[] args) throws Throwable {
+	public static void main(String[] args) throws Throwable {
 
-        String[] targetTables = { //
-                "account", //
-                "address"//
-        };
+		// 操作対象のテーブル設定
+		String[] targetTables = { //
+				"account", //
+				"address"//
+		};
 
-        //   DBHelper.clearTables(targetTables);
+		// 全テーブルデータ削除する（慎重に！！！）
+		// DBHelper.clearTables(targetTables);
 
-       dothat(targetTables);
+		// 全テーブルデータのInsertSQL文作成する
+		DBHelper.generatarSQL(targetTables);
+		// 全テーブルデータをcsvファイルに出力する
+		DBHelper.generatarCSV(targetTables);
 
-       //   DBHelper.executeSQL("times-20171102175245");
-    }
+		// 設定outputフォルダにある全部SQL文を実施する
+		// DBHelper.executeSQL("times-20171102175245");
+	}
 
-    // 両方出力
-    static void dothat(String... tableNames) throws Throwable {
-
-        DBHelper.generatarSQL(tableNames);
-
-        DBHelper.generatarCSV(tableNames);
-    }
 }
