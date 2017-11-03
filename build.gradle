@@ -1,0 +1,49 @@
+buildscript {
+    ext {
+        mysqlVersion = '5.1.42'
+
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven { url 'http://repo.spring.io/plugins-release' }
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath 'io.spring.gradle:propdeps-plugin:0.0.9.RELEASE'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+
+group 'jp.co.sparkworks.testhelper'
+version '1.0.0'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+def encoding = { it.encoding = "UTF-8" }
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url 'http://repo.spring.io/plugins-release' }
+    maven { url "https://plugins.gradle.org/m2/" }
+}
+
+configure(allprojects) {
+    apply plugin: 'propdeps-idea'
+    apply plugin: 'propdeps-eclipse'
+}
+
+
+dependencies {
+    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
+}

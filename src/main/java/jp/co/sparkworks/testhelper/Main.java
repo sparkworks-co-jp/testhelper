@@ -5,8 +5,8 @@ public class Main {
     public static void main(String[] args) throws Throwable {
 
         String[] targetTables = { //
-                "aaa", //
-                "bbb"//
+                "account", //
+                "address"//
         };
 
         //   DBHelper.clearTables(targetTables);

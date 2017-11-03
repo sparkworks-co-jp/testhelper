@@ -129,7 +129,7 @@ public class DBExecutor {
         if (conn == null || conn.isClosed()) {
             Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager
-                    .getConnection("jdbc:mysql://localhost/xxxxxxxxxxxxxx");//TODO
+                    .getConnection("jdbc:mysql://localhost:3306/goodlunch?useSSL=false&user=root&password=goodlunch");//TODO
         }
         return conn;
     }
