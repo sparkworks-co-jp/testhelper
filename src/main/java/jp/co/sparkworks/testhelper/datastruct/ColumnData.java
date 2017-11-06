@@ -2,47 +2,45 @@ package jp.co.sparkworks.testhelper.datastruct;
 
 public class ColumnData {
 
-    private String name;
-    private String value;
-    private ColumnType columnType;
-    private boolean isAutoIncrement;
+	private String name;
+	private String value;
+	private ColumnType columnType;
+	private boolean isAutoIncrement;
 
+	public String getName() {
+		return name;
+	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getValue() {
+		return value;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setValue(String value) {
+		this.value = value;
+	}
 
-    public String getValue() {
-        return value;
-    }
+	public ColumnType getColumnType() {
+		return columnType;
+	}
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+	public void setColumnType(ColumnType columnType) {
+		this.columnType = columnType;
+	}
 
-    public ColumnType getColumnType() {
-        return columnType;
-    }
+	public boolean isAutoIncrement() {
+		return isAutoIncrement;
+	}
 
-    public void setColumnType(ColumnType columnType) {
-        this.columnType = columnType;
-    }
+	public void setAutoIncrement(boolean isAutoIncrement) {
+		this.isAutoIncrement = isAutoIncrement;
+	}
 
-    public boolean isAutoIncrement() {
-        return isAutoIncrement;
-    }
-
-    public void setAutoIncrement(boolean isAutoIncrement) {
-        this.isAutoIncrement = isAutoIncrement;
-    }
-
-    public String toString() {
-        return name + "-" + value + "-" + columnType + "-" + isAutoIncrement;
-    }
+	public String toString() {
+		return name + "-" + value + "-" + columnType + "-" + isAutoIncrement;
+	}
 
 }

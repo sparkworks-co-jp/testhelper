@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.Arrays;
 import java.util.List;
+
+import jp.co.sparkworks.testhelper.DBHelper;
 import jp.co.sparkworks.testhelper.datastruct.ColumnData;
 import jp.co.sparkworks.testhelper.datastruct.ColumnType;
 import jp.co.sparkworks.testhelper.datastruct.RowData;
@@ -15,145 +17,137 @@ import jp.co.sparkworks.testhelper.datastruct.TableData;
 
 public class DBExecutor {
 
-    static Connection conn = null;
+	static Connection conn = null;
 
+	public static TableData executeQueryByTableName(String tableName) throws Throwable {
+		TableData table = executeQuery("SELECT * FROM " + tableName);
+		table.setTableName(tableName.toUpperCase());
+		return table;
+	}
 
+	private static TableData executeQuery(String sql) throws Throwable {
+		TableData tableData = new TableData();
 
-    public static TableData executeQueryByTableName(String tableName) throws Throwable {
-        TableData table = executeQuery("SELECT * FROM " + tableName);
-        table.setTableName(tableName.toUpperCase());
-        return table;
-    }
+		Statement stmt = getConnection().createStatement();
+		ResultSet rset = stmt.executeQuery(sql);
 
-    private static TableData executeQuery(String sql) throws Throwable {
-        TableData tableData = new TableData();
+		// データ取出
+		ResultSetMetaData metaData = rset.getMetaData();
 
-        Statement stmt = getConnection().createStatement();
-        ResultSet rset = stmt.executeQuery(sql);
+		while (rset.next()) {
 
-        // データ取出
-        ResultSetMetaData metaData = rset.getMetaData();
+			RowData rowData = new RowData();
+			for (int i = 1; i <= metaData.getColumnCount(); i++) {
+				ColumnData column = new ColumnData();
 
-        while (rset.next()) {
+				// name
+				column.setName(metaData.getColumnName(i));
 
-            RowData rowData = new RowData();
-            for (int i = 1; i <= metaData.getColumnCount(); i++) {
-                ColumnData column = new ColumnData();
+				// value
+				column.setValue(rset.getString(i));
 
-                // name
-                column.setName(metaData.getColumnName(i));
+				// recordType
+				ColumnType type = null;
+				int columnType = metaData.getColumnType(i);
 
-                // value
-                column.setValue(rset.getString(i));
+				switch (columnType) {
 
-                // recordType
-                ColumnType type = null;
-                int columnType = metaData.getColumnType(i);
+				case Types.BIT:
+				case Types.SMALLINT:
+				case Types.INTEGER:
+				case Types.BIGINT:
+				case Types.FLOAT:
+				case Types.DOUBLE:
+				case Types.DECIMAL:
+					type = ColumnType.DIGIT;// 数字なら"'"附かない
 
-                switch (columnType) {
+					break;
+				case Types.CHAR:
+				case Types.NCHAR:
+				case Types.VARCHAR:
+				case Types.NVARCHAR:
+					type = ColumnType.STRING;
 
-                    case Types.BIT:
-                    case Types.SMALLINT:
-                    case Types.INTEGER:
-                    case Types.BIGINT:
-                    case Types.FLOAT:
-                    case Types.DOUBLE:
-                    case Types.DECIMAL:
-                        type = ColumnType.DIGIT;// 数字なら"'"附かない
+					break;
+				case Types.TIMESTAMP:
+				case Types.DATE:
+				case Types.TIME:
+					type = ColumnType.DATETIME;
 
-                        break;
-                    case Types.CHAR:
-                    case Types.NCHAR:
-                    case Types.VARCHAR:
-                    case Types.NVARCHAR:
-                        type = ColumnType.STRING;
+					break;
+				default:
+					type = ColumnType.STRING;
+				}
 
-                        break;
-                    case Types.TIMESTAMP:
-                    case Types.DATE:
-                    case Types.TIME:
-                        type = ColumnType.DATETIME;
+				// System.out.println(columnType + " -> " + type);
 
-                        break;
-                    default:
-                        type = ColumnType.STRING;
-                }
+				column.setColumnType(type);
 
-                // System.out.println(columnType + " -> " + type);
+				// isAutoIncrement
+				column.setAutoIncrement(metaData.isAutoIncrement(i));
 
-                column.setColumnType(type);
+				rowData.getColumnData().add(column);
+			}
 
-                // isAutoIncrement
-                column.setAutoIncrement(metaData.isAutoIncrement(i));
+			tableData.getTableData().add(rowData);
+		}
 
-                rowData.getColumnData().add(column);
-            }
+		// クローズ
+		closeResultSet(rset);
+		closeStatement(stmt);
+		closeConnection(conn);
 
-            tableData.getTableData().add(rowData);
-        }
+		return tableData;
+	}
 
+	public static int executeUpdate(String... sqls) throws Throwable {
+		return executeUpdate(Arrays.asList(sqls));
+	}
 
-        // クローズ
-        closeResultSet(rset);
-        closeStatement(stmt);
-        closeConnection(conn);
+	public static int executeUpdate(List<String> sqls) throws Throwable {
 
-        return tableData;
-    }
+		Statement stmt = getConnection().createStatement();
+		int effectRows = 0;
 
+		for (String sql : sqls) {
+			System.out.println("executeUpdate -> " + sql);
+			effectRows = effectRows + stmt.executeUpdate(sql);
+		}
 
-    public static int executeUpdate(String... sqls) throws Throwable {
-        return executeUpdate(Arrays.asList(sqls));
-    }
+		// クローズ
+		closeStatement(stmt);
+		closeConnection(conn);
 
-    public static int executeUpdate(List<String> sqls) throws Throwable {
+		return effectRows;
+	}
 
-        Statement stmt = getConnection().createStatement();
-        int effectRows = 0;
+	static Connection getConnection() throws Throwable {
+		if (conn == null || conn.isClosed()) {
+			Class.forName("com.mysql.jdbc.Driver");
+			conn = DriverManager.getConnection(DBHelper.getConnectionString());// TODO
+		}
+		return conn;
+	}
 
-        for (String sql : sqls) {
-            System.out.println("executeUpdate -> " + sql);
-            effectRows = effectRows + stmt.executeUpdate(sql);
-        }
+	private static void closeResultSet(ResultSet rset) {
+		try {
+			rset.close();
+		} catch (Exception ex) {
+		}
+	}
 
+	private static void closeStatement(Statement stmt) {
+		try {
+			stmt.close();
+		} catch (Exception ex) {
+		}
+	}
 
-        // クローズ
-        closeStatement(stmt);
-        closeConnection(conn);
-
-        return effectRows;
-    }
-
-
-    static Connection getConnection() throws Throwable {
-        if (conn == null || conn.isClosed()) {
-            Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager
-                    .getConnection("jdbc:mysql://localhost:3306/goodlunch?useSSL=false&user=root&password=goodlunch");//TODO
-        }
-        return conn;
-    }
-
-
-    private static void closeResultSet(ResultSet rset) {
-        try {
-            rset.close();
-        } catch (Exception ex) {
-        }
-    }
-
-    private static void closeStatement(Statement stmt) {
-        try {
-            stmt.close();
-        } catch (Exception ex) {
-        }
-    }
-
-    private static void closeConnection(Connection conn) {
-        try {
-            conn.close();
-        } catch (Exception ex) {
-        }
-    }
+	private static void closeConnection(Connection conn) {
+		try {
+			conn.close();
+		} catch (Exception ex) {
+		}
+	}
 
 }

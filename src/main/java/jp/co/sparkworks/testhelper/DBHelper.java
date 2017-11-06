@@ -11,76 +11,82 @@ import jp.co.sparkworks.testhelper.output.Writer;
 
 public class DBHelper {
 
-    public static void generatarSQL(String... tableNames) throws Throwable {
+	private static String connectionString = null;
 
-        for (String tableName : tableNames) {
-            System.out.println("[" + tableName + "] InsertSQL ");
+	public static String getConnectionString() {
+		return connectionString;
+	}
 
-            // 全データ取得
-            TableData table = DBExecutor.executeQueryByTableName(tableName);
+	public static void setConnectionString(String connectionString) {
+		DBHelper.connectionString = connectionString;
+	}
 
-            if (table == null || table.getTableData().size() == 0) {
-                System.out.println("NO DATA!");
-            } else {
-                // SQL作成
-                String insertSQL = SQLGenerater.generater(table);
+	public static void generatarSQL(String... tableNames) throws Throwable {
 
-                // ファイル出力
-                System.out.println(insertSQL);
-                Writer.writerSQL(tableName, insertSQL);
-            }
+		for (String tableName : tableNames) {
+			System.out.println("[" + tableName + "] InsertSQL ");
 
-        }
-    }
+			// 全データ取得
+			TableData table = DBExecutor.executeQueryByTableName(tableName);
 
+			if (table == null || table.getTableData().size() == 0) {
+				System.out.println("NO DATA!");
+			} else {
+				// SQL作成
+				String insertSQL = SQLGenerater.generater(table);
 
-    public static void generatarCSV(String... tableNames) throws Throwable {
+				// ファイル出力
+				System.out.println(insertSQL);
+				Writer.writerSQL(tableName, insertSQL);
+			}
 
-        for (String tableName : tableNames) {
-            System.out.println("[" + tableName + "] CSV ");
+		}
+	}
 
-            // 全データ取得
-            TableData table = DBExecutor.executeQueryByTableName(tableName);
+	public static void generatarCSV(String... tableNames) throws Throwable {
 
-            if (table == null || table.getTableData().size() == 0) {
-                System.out.println("NO DATA!");
-            } else {
-                // CSV作成
-                String csvString = CSVGenerater.generater(table);
-                System.out.println(csvString);
+		for (String tableName : tableNames) {
+			System.out.println("[" + tableName + "] CSV ");
 
-                // ファイル出力
-                Writer.writerCSV(tableName, csvString);
-            }
+			// 全データ取得
+			TableData table = DBExecutor.executeQueryByTableName(tableName);
 
-        }
-    }
+			if (table == null || table.getTableData().size() == 0) {
+				System.out.println("NO DATA!");
+			} else {
+				// CSV作成
+				String csvString = CSVGenerater.generater(table);
+				System.out.println(csvString);
 
+				// ファイル出力
+				Writer.writerCSV(tableName, csvString);
+			}
 
+		}
+	}
 
-    public static void executeSQL(String foldername) throws Throwable {
-        // 全SQL取得
-        List<String> list = Reader.readSQL(foldername);
+	public static void executeSQL(String foldername) throws Throwable {
+		// 全SQL取得
+		List<String> list = Reader.readSQL(foldername);
 
-        // SQL実施
-        List<String> sqls = new ArrayList<String>();
-        for (String sql : list) {
-            String exesql = sql.trim();
-            if (exesql.endsWith(";")) {
-                exesql.replace(";", "");
-            }
-            sqls.add(exesql);
-        }
+		// SQL実施
+		List<String> sqls = new ArrayList<String>();
+		for (String sql : list) {
+			String exesql = sql.trim();
+			if (exesql.endsWith(";")) {
+				exesql.replace(";", "");
+			}
+			sqls.add(exesql);
+		}
 
+		DBExecutor.executeUpdate(sqls);
 
-        DBExecutor.executeUpdate(sqls);
+	}
 
-    }
-
-    public static void clearTables(String... tables) throws Throwable {
-        for (String tablename : tables) {
-            String sql = "delete from " + tablename;
-            DBExecutor.executeUpdate(sql);
-        }
-    }
+	public static void clearTables(String... tables) throws Throwable {
+		for (String tablename : tables) {
+			String sql = "delete from " + tablename;
+			DBExecutor.executeUpdate(sql);
+		}
+	}
 }

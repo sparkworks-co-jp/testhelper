@@ -4,6 +4,9 @@ public class Main {
 
 	public static void main(String[] args) throws Throwable {
 
+		// 接続文字列を設定する
+		DBHelper.setConnectionString("jdbc:mysql://localhost:3306/goodlunch?useSSL=false&user=root&password=goodlunch");
+
 		// 操作対象のテーブル設定
 		String[] targetTables = { //
 				"account", //
@@ -19,7 +22,7 @@ public class Main {
 		DBHelper.generatarCSV(targetTables);
 
 		// 設定outputフォルダにある全部SQL文を実施する
-		// DBHelper.executeSQL("times-20171102175245");
+		// DBHelper.executeSQL("sql-20171102175245");
 	}
 
 }
