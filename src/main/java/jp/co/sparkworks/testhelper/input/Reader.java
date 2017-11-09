@@ -41,11 +41,11 @@ public class Reader {
             String sql = br.readLine();
             StringBuffer last = null;
             while (sql != null && sql.trim().length() > 0 && !sql.trim().startsWith("#")) {
-                sql = sql.trim();
+                String sqlTrimedAndLowerred = sql.trim().toLowerCase();
                 System.out.println(sql);
 
-                if (sql.toLowerCase().indexOf("insert ") > -1 || sql.toLowerCase().indexOf("update ") > -1
-                        || sql.toLowerCase().indexOf("delete ") > -1) {
+                if (sqlTrimedAndLowerred.indexOf("insert ") > -1 || sqlTrimedAndLowerred.indexOf("update ") > -1
+                        || sqlTrimedAndLowerred.indexOf("delete ") > -1) {
                     if (last != null) {
                         list.add(last.toString());
                     }
