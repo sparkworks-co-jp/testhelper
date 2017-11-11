@@ -31,4 +31,4 @@ DBHelper.generatarSQL(targetTables);
 DBHelper.generatarCSV(targetTables);
 
 // 設定outputフォルダにある全部SQL文を実施する
-DBHelper.executeSQL("times-20171102175245");
+DBHelper.executeSQL("SQL-20171102175245");
