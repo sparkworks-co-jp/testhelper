@@ -40,7 +40,7 @@ public class Reader {
 
             String sql = br.readLine();
             StringBuffer last = null;
-            while (sql != null && sql.trim().length() > 0 && !sql.trim().startsWith("#")) {
+            while (sql != null && !sql.trim().startsWith("#")) {
                 String sqlTrimedAndLowerred = sql.trim().toLowerCase();
                 System.out.println(sql);
 
