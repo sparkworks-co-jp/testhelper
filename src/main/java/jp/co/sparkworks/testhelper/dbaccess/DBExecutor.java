@@ -20,7 +20,7 @@ public class DBExecutor {
 	static Connection conn = null;
 
 	public static TableData executeQueryByTableName(String tableName) throws Throwable {
-		TableData table = executeQuery("SELECT * FROM " + tableName);
+		TableData table = executeQuery("SELECT * FROM " + tableName + " LIMIT 10000");
 		table.setTableName(tableName.toUpperCase());
 		return table;
 	}
