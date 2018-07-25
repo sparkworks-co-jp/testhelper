@@ -23,12 +23,18 @@ String[] targetTables = { //
 };
 
 // 全テーブルデータ削除する（慎重に！！！）
+
 DBHelper.clearTables(targetTables);
 
 // 全テーブルデータのInsertSQL文作成する
+
 DBHelper.generatarSQL(targetTables);
+
+
 // 全テーブルデータをcsvファイルに出力する
+
 DBHelper.generatarCSV(targetTables);
 
 // 設定outputフォルダにある全部SQL文を実施する
+
 DBHelper.executeSQL("SQL-20171102175245");
