@@ -19,9 +19,12 @@ DBHelper.setConnectionString("jdbc:mysql://localhost:3306/goodlunch?useSSL=false
 
 
 // 操作対象のテーブル設定
+
 String[] targetTables = { //
-		"account", //
-		"address"//
+
+		"account", //テーブル名
+		
+		"address"//テーブル名
 };
 
 
