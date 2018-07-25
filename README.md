@@ -15,6 +15,7 @@
 
 
 // 接続文字列を設定する
+
 DBHelper.setConnectionString("jdbc:mysql://localhost:3306/goodlunch?useSSL=false&user=root&password=goodlunch");
 
 
