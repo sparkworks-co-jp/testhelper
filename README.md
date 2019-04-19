@@ -36,7 +36,7 @@ DBHelper.clearTables(targetTables);
 
 // 全テーブルデータのInsert SQL文作成する
 
-DBHelper.generatarSQL(targetTables);
+DBHelper.generatarSQL(2001,targetTables);// "2001"は作成しようとするflyway用テストデータの開始V番号("V1__xxx"のところ)
 
 
 

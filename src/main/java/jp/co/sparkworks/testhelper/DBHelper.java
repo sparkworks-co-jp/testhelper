@@ -2,6 +2,7 @@ package jp.co.sparkworks.testhelper;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import jp.co.sparkworks.testhelper.datastruct.TableData;
 import jp.co.sparkworks.testhelper.dbaccess.DBExecutor;
 import jp.co.sparkworks.testhelper.generater.CSVGenerater;
@@ -21,7 +22,7 @@ public class DBHelper {
 		DBHelper.connectionString = connectionString;
 	}
 
-	public static void generatarSQL(String... tableNames) throws Throwable {
+	public static void generatarSQL(int startVersion, String... tableNames) throws Throwable {
 
 		for (String tableName : tableNames) {
 			System.out.println("[" + tableName + "] InsertSQL ");
@@ -37,7 +38,7 @@ public class DBHelper {
 
 				// ファイル出力
 				System.out.println(insertSQL);
-				Writer.writerSQL(tableName, insertSQL);
+				Writer.writerSQL("V" + startVersion++ + "__" + tableName, insertSQL);
 			}
 
 		}
