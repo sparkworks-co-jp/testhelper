@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,6 +19,21 @@ import jp.co.sparkworks.testhelper.datastruct.TableData;
 public class DBExecutor {
 
 	static Connection conn = null;
+
+	public static String[] getAlltables() throws Throwable {
+
+		TableData table = executeQuery(
+				"SELECT table_name FROM information_schema.tables WHERE table_schema =(SELECT DATABASE())");
+
+		List<String> tableList = new ArrayList<String>();
+		table.getTableData().stream().forEach(tableData -> {
+			tableList.add(tableData.getColumnData().get(0).getValue());
+		});
+
+		System.out.println("All tables:" + tableList);
+		String[] tablesName = new String[table.getTableData().size()];
+		return tableList.toArray(tablesName);
+	}
 
 	public static TableData executeQueryByTableName(String tableName) throws Throwable {
 		TableData table = executeQuery("SELECT * FROM " + tableName + " LIMIT 10000");
