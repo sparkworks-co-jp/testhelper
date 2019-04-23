@@ -21,9 +21,8 @@ public class DBExecutor {
 	static Connection conn = null;
 
 	public static String[] getAlltables() throws Throwable {
-
 		TableData table = executeQuery(
-				"SELECT table_name FROM information_schema.tables WHERE table_schema =(SELECT DATABASE()) AND table_name != ‘flyway_schema_history'");
+				"SELECT table_name FROM information_schema.tables WHERE table_schema =(SELECT DATABASE()) AND table_name != 'flyway_schema_history'");
 
 		List<String> tableList = new ArrayList<String>();
 		table.getTableData().stream().forEach(tableData -> {
@@ -52,70 +51,70 @@ public class DBExecutor {
 
 		while (rset.next()) {
 
-		    RowData rowData = new RowData();
-		    for (int i = 1; i <= metaData.getColumnCount(); i++) {
-			ColumnData column = new ColumnData();
+			RowData rowData = new RowData();
+			for (int i = 1; i <= metaData.getColumnCount(); i++) {
+				ColumnData column = new ColumnData();
 
-			// name
-			column.setName(metaData.getColumnName(i));
+				// name
+				column.setName(metaData.getColumnName(i));
 
-			// recordType
-			ColumnType type = null;
-			String value = null;
-			int columnType = metaData.getColumnType(i);
+				// recordType
+				ColumnType type = null;
+				String value = null;
+				int columnType = metaData.getColumnType(i);
 
-			switch (columnType) {
+				switch (columnType) {
 
-			    case Types.BIT:
-			    case Types.SMALLINT:
-			    case Types.INTEGER:
-			    case Types.BIGINT:
-			    case Types.FLOAT:
-			    case Types.DOUBLE:
-			    case Types.DECIMAL:
-				type = ColumnType.DIGIT;// 数字なら"'"附かない
-				value = rset.getString(i);
-				break;
+				case Types.BIT:
+				case Types.SMALLINT:
+				case Types.INTEGER:
+				case Types.BIGINT:
+				case Types.FLOAT:
+				case Types.DOUBLE:
+				case Types.DECIMAL:
+					type = ColumnType.DIGIT;// 数字なら"'"附かない
+					value = rset.getString(i);
+					break;
 
-			    case Types.CHAR:
-			    case Types.VARCHAR:
-			    case Types.LONGVARCHAR:
-			    case Types.NCHAR:
-			    case Types.NVARCHAR:
-			    case Types.LONGNVARCHAR:
-				type = ColumnType.STRING;
-				value = rset.getString(i);
-				if (value != null && value.contains("'")) {
-				    value = value.replaceAll("'", "''");
+				case Types.CHAR:
+				case Types.VARCHAR:
+				case Types.LONGVARCHAR:
+				case Types.NCHAR:
+				case Types.NVARCHAR:
+				case Types.LONGNVARCHAR:
+					type = ColumnType.STRING;
+					value = rset.getString(i);
+					if (value != null && value.contains("'")) {
+						value = value.replaceAll("'", "''");
+					}
+					break;
+
+				case Types.TIMESTAMP:
+				case Types.DATE:
+				case Types.TIME:
+					type = ColumnType.DATETIME;
+					value = rset.getString(i);
+					break;
+
+				default:
+					type = ColumnType.STRING;
+					value = rset.getString(i);
 				}
-				break;
 
-			    case Types.TIMESTAMP:
-			    case Types.DATE:
-			    case Types.TIME:
-				type = ColumnType.DATETIME;
-				value = rset.getString(i);
-				break;
+				// System.out.println(columnType + " -> " + type);
 
-			    default:
-				type = ColumnType.STRING;
-				value = rset.getString(i);
+				column.setColumnType(type);
+
+				// value
+				column.setValue(value);
+
+				// isAutoIncrement
+				column.setAutoIncrement(metaData.isAutoIncrement(i));
+
+				rowData.getColumnData().add(column);
 			}
 
-			// System.out.println(columnType + " -> " + type);
-
-			column.setColumnType(type);
-
-			// value
-			column.setValue(value);
-
-			// isAutoIncrement
-			column.setAutoIncrement(metaData.isAutoIncrement(i));
-
-			rowData.getColumnData().add(column);
-		    }
-
-		    tableData.getTableData().add(rowData);
+			tableData.getTableData().add(rowData);
 		}
 
 		// クローズ
