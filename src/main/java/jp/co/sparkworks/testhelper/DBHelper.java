@@ -22,6 +22,16 @@ public class DBHelper {
 		DBHelper.connectionString = connectionString;
 	}
 
+	public static void generatarAllTablesSQL(int startVersion) throws Throwable {
+		String[] allTables = DBExecutor.getAlltables();
+		generatarSQL(startVersion, allTables);
+	}
+
+	public static void generatarAllTablesCSV() throws Throwable {
+		String[] allTables = DBExecutor.getAlltables();
+		generatarCSV(allTables);
+	}
+
 	public static void generatarSQL(int startVersion, String... tableNames) throws Throwable {
 
 		for (String tableName : tableNames) {
